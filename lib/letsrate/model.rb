@@ -11,12 +11,12 @@ module Letsrate
         r.rater_id = user_id
         r.save!
       end
-      update_rate_average(stars, dimension, :create)
+      update_rate_average(stars, dimension)
     else
       r = rates(dimension).find_by_rater_id user_id
       if (r)
-        r.update_attribute(:stars, stars, :create)
-        update_rate_average(stars, dimension, :update)
+        r.update_attribute(:stars, stars)
+        update_rate_average(stars, dimension)
       end
     end
   end
@@ -34,7 +34,6 @@ module Letsrate
     else
       a = average(dimension)
       qty = a.cacheable.rates(dimension).count
-      qty +=1 if type && type == :create
       a.avg = a.cacheable.rates.sum(&:stars) / qty
       a.qty = qty
       a.save!
