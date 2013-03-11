@@ -5,7 +5,7 @@ module Helpers
       klass = rateable_obj.rates.where(:rater_id => options[:user])
       avg = klass.average(:stars).to_i
     else
-      klass = dimension.nil? ? rateable_obj.average : rateable_obj.average dimension
+      klass = dimension.nil? ? rateable_obj.average : rateable_obj.average(dimension)
       avg = klass.nil? ? 0 : klass.avg
     end
     content_tag :div, nil, "data-dimension" => dimension, :class => "star", "data-rating" => avg,
