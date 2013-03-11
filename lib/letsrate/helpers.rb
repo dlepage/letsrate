@@ -1,27 +1,17 @@
-module Helpers  
-  def rating_for(rateable_obj, dimension=nil, options={})                             
- 
-    if dimension.nil?
-      klass = rateable_obj.average
-    else             
-      klass = rateable_obj.average "#{dimension}"    
-    end
-    
-    if klass.nil?
-      avg = 0
+module Helpers
+
+  def rating_for(rateable_obj, dimension=nil, options={})
+    if options && options.has_key?(:user)
+      klass = rateable_obj.rates.where(:rater_id => options[:user])
+      avg = klass.average(:stars).to_i
     else
-      avg = klass.avg
+      klass = dimension.nil? ? rateable_obj.average : rateable_obj.average dimension
+      avg = klass.nil? ? 0 : klass.avg
     end
-    
-    star = options[:star] || 5
-    
-    content_tag :div, "", "data-dimension" => dimension, :class => "star", "data-rating" => avg, 
-                          "data-id" => rateable_obj.id, "data-classname" => rateable_obj.class.name,
-                          "data-star-count" => star           
-    
-    
+    content_tag :div, nil, "data-dimension" => dimension, :class => "star", "data-rating" => avg,
+                           "data-id" => rateable_obj.id, "data-classname" => rateable_obj.class.name,
+                           "data-star-count" => (options[:star] || 5)
   end
-     
 end
 
 class ActionView::Base
